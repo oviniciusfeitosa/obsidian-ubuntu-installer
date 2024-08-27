@@ -13,14 +13,21 @@ echo "> Changing file permissions"
 chmod +x "$filename" && ./"$filename" --appimage-extract
 destination_folder="/opt/Obsidian"
 echo "Application will be installed on '$destination_folder' folder"
+
+if [ -d "$destination_folder" ]; then
+    echo "Error: The directory '$destination_folder' already exists. Installation aborted."
+    exit 1
+fi
 sudo mv squashfs-root "$destination_folder"
 sudo chown -R root: "$destination_folder"
 sudo chmod 4755 "$destination_folder/chrome-sandbox"
 sudo find /opt/Obsidian -type d -exec chmod 755 {} \;
+
 if [ ! -e /usr/local/bin/obsidian ]; then
     echo "> Creating a symbolic link to /usr/local/bin/obsidian"
-    ln -s /opt/Obsidian/AppRun /usr/local/bin/obsidian
+    sudo ln -s /opt/Obsidian/AppRun /usr/local/bin/obsidian
 fi
+
 echo "> Creating a desktop entry"
 echo "[Desktop Entry]
 Name=Obsidian
